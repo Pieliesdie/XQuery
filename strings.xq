@@ -1,3 +1,5 @@
+module namespace str = "oda";
+declare default function namespace "oda";
 (:Summary:)
 (:Вставляет параметры в plaint text запроса:)
 (:Params:)
@@ -9,8 +11,8 @@ let $link := 'H:this/D:WORK/D:1D465EBA7DB470F/D:1CDA7834ECABDD2/C:1CA61E90FB736A
 let $query := oda:xquery-doc($link,'*')/OBJECT/XQ/oda:cdata()
 let $query := local:insertParameter($query, 'dateType', 'Квартал')
 :)
-declare function local:insertParameter($query as xs:string, $name as xs:string, $value as xs:string) as xs:string {
-	fn:replace($query, concat("\[#",$name,"#\]"),$value)
+declare function insertParameter($query as xs:string, $name as xs:string, $value as xs:string) as xs:string {
+	fn:replace($query, fn:concat("\[#",$name,"#\]"),$value)
 };
 
 (:Summary:)
@@ -18,9 +20,9 @@ declare function local:insertParameter($query as xs:string, $name as xs:string, 
 (:Params:)
 (:Param $string - исходная строка:)
 (:Usage local:NotEmpty("test_string"):)
-declare function local:NotEmpty($source as xs:string) as xs:boolean
+declare function NotEmpty($source as xs:string) as xs:boolean
 {
-	if (string-length($source)>0) then true() else false()
+	if (fn:string-length($source)>0) then fn:true() else fn:false()
 };
 
 (:Summary:)
@@ -29,8 +31,8 @@ declare function local:NotEmpty($source as xs:string) as xs:boolean
 (:Param $string - исходная строка с токенами подстановки в виде {N}:)
 (:Param $params - значения для подстановки:)
 (:Usage local:format('PACK/OBJECT[@oid = "{0}"]', /OBJECT/@oid):)
-declare function local:format($string as xs:string, $params as xs:string*) as xs:string {
-	if(count($params) = 0 ) then $string else	
-	let $newString := replace($string, concat('\{',count($params) - 1,'\}'), xs:string($params[last()]))
-	return local:format($newString, $params[position() != last()])
+declare function format($string as xs:string, $params as xs:string*) as xs:string {
+	if(fn:count($params) = 0 ) then $string else	
+	let $newString := fn:replace($string, fn:concat('\{',fn:count($params) - 1,'\}'), xs:string($params[fn:last()]))
+	return format($newString, $params[fn:position() != fn:last()])
 };
